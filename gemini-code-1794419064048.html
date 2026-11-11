@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulado Interativo de Inglês - 9º Ano (B1)</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #002147;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Scrollbar Estilizada */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dc2626;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b91c1c;
+    }
+
+    /* Header e Navegação */
+    header {
+      width: 100%;
+      max-width: 850px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 15px;
+      display: block;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      background-color: #001026;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+
+    .nav-grid {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      border: 2px solid #ffffff;
+      background-color: #001530;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #003366;
+    }
+
+    .nav-btn.active {
+      border-color: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .nav-btn.correct {
+      background-color: #16a34a !important;
+      border-color: #16a34a !important;
+      color: #fff;
+    }
+
+    .nav-btn.incorrect {
+      background-color: #dc2626 !important;
+      border-color: #dc2626 !important;
+      color: #fff;
+    }
+
+    /* Container Principal */
+    .container {
+      background-color: #ffffff;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 850px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .question-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #000;
+    }
+
+    /* Pinned Text (Texto Fixo com Scroll) */
+    .pinned-text-box {
+      max-height: 240px;
+      overflow-y: auto;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #dc2626;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #000;
+    }
+
+    .pinned-text-box h4 {
+      margin-bottom: 8px;
+      color: #dc2626;
+    }
+
+    /* Enunciado */
+    .statement {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #000;
+      font-weight: 500;
+    }
+
+    /* Opções de Resposta */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      background-color: #fff;
+    }
+
+    .option-item:hover {
+      background-color: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .option-item input[type="radio"] {
+      margin-top: 4px;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+
+    .option-text {
+      font-size: 1rem;
+      color: #000;
+      line-height: 1.4;
+    }
+
+    .option-item.selected {
+      border-color: #dc2626;
+      background-color: #fef2f2;
+    }
+
+    .option-item.correct-bg {
+      background-color: #dcfce7 !important;
+      border-color: #16a34a !important;
+    }
+
+    .option-item.incorrect-bg {
+      background-color: #fee2e2 !important;
+      border-color: #dc2626 !important;
+    }
+
+    /* Justificativa / Feedback */
+    .feedback-box {
+      display: none;
+      background-color: #f8fafc;
+      border-left: 4px solid #0284c7;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #000;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      color: #0284c7;
+    }
+
+    /* Botões de Ação na Ordem Obrigatória: [ Next ] [ Check ] [ Previous ] */
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      flex: 1;
+      max-width: 150px;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: #b91c1c;
+    }
+
+    .btn:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .btn-finish {
+      background-color: #16a34a;
+      max-width: 200px;
+    }
+
+    .btn-finish:hover {
+      background-color: #15803d;
+    }
+
+    /* Modal de Resultado Final */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px;
+      color: #000;
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .modal-header h2 {
+      color: #dc2626;
+      font-size: 1.8rem;
+    }
+
+    .score-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background-color: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .stat-value.correct { color: #16a34a; }
+    .stat-value.incorrect { color: #dc2626; }
+
+    .diagnostics-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .diagnostics-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      .action-buttons {
+        flex-direction: row;
+      }
+      .btn {
+        padding: 10px 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="master.png" alt="Logo Master" class="logo" onerror="this.onerror=null; this.src='https://placehold.co/180x60/001026/ffffff?text=LOGO+MASTER';">
+    <h1>Simulado de Língua Inglesa - 9º Ano (Nível B1)</h1>
+    <div class="nav-grid" id="nav-grid">
+      <!-- Botões de 1 a 10 gerados via JS -->
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="question-header">
+      <span class="question-title" id="question-title">Questão 1 de 10</span>
+    </div>
+
+    <!-- Pinned Text (Exibido nas Questões 1, 2 e 3) -->
+    <div class="pinned-text-box" id="pinned-text-box" style="display: none;">
+      <h4>Texto Base:</h4>
+      <p id="pinned-text-content"></p>
+    </div>
+
+    <!-- Enunciado -->
+    <div class="statement" id="statement-text">
+      <!-- Enunciado será carregado aqui -->
+    </div>
+
+    <!-- Opções -->
+    <div class="options-list" id="options-list">
+      <!-- Opções serão carregadas aqui -->
+    </div>
+
+    <!-- Justificativa -->
+    <div class="feedback-box" id="feedback-box">
+      <strong>Justificativa:</strong> <span id="feedback-text"></span>
+    </div>
+
+    <!-- Botões de Ação: [ Next ] [ Check ] [ Previous ] -->
+    <div class="action-buttons">
+      <button class="btn" id="btn-next" onclick="nextQuestion()">Next</button>
+      <button class="btn" id="btn-check" onclick="checkAnswer()">Check</button>
+      <button class="btn" id="btn-prev" onclick="prevQuestion()">Previous</button>
+    </div>
+  </main>
+
+  <!-- Modal de Resultado Final -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Resultado do Simulado</h2>
+      </div>
+      <div class="score-display" id="score-display">
+        Sua Nota: 0,0 / 10,0
+      </div>
+      <div class="stats-container">
+        <div class="stat-item">
+          <div>Acertos</div>
+          <div class="stat-value correct" id="stat-correct">0 (0%)</div>
+        </div>
+        <div class="stat-item">
+          <div>Erros</div>
+          <div class="stat-value incorrect" id="stat-incorrect">0 (0%)</div>
+        </div>
+      </div>
+      <div class="diagnostics-title">Diagnóstico e Recomendações Pedagógicas:</div>
+      <ul class="diagnostics-list" id="diagnostics-list">
+        <!-- Recomendações dinâmicas -->
+      </ul>
+      <div class="modal-footer">
+        <button class="btn btn-finish" onclick="restartQuiz()">Refazer Simulado</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // TEXTO BASE (NÍVEL B1 CEFR, 3 PARÁGRAFOS SOBRE INOVAÇÕES REAIS CONTRA A POLUIÇÃO)
+    const textBase123 = `Innovations Fighting Global Pollution\n\n` +
+      `Today, companies are creating smart products to replace single-use plastics that pollute our oceans. One real innovation is seaweed packaging, developed by the British company Notpla. Made from brown seaweed, this material can hold liquids and food, and it biodegrades naturally in just four to six weeks. Unlike traditional plastic, which remains in the environment for hundreds of years, seaweed packaging disappears without leaving toxic microplastics behind. Nevertheless, scaling up production to replace all plastic worldwide remains a major challenge.\n\n` +
+      `Another groundbreaking solution is Direct Air Capture (DAC) technology, led by the Swiss company Climeworks. At their Mammoth plant in Iceland, giant fans pull carbon dioxide directly from the atmosphere. The captured gas is then mixed with water and pumped deep underground into basalt rock, where it naturally turns into stone within a few years. Although this service permanently removes greenhouse gases from the air, building and powering these facilities is currently very expensive and requires significant renewable energy.\n\n` +
+      `Finally, new business services are changing how we buy everyday items through the "reuse" model. Platforms like Loop, created by TerraCycle, partner with major brands to deliver food and hygiene products in durable glass or stainless-steel containers. After using the product, customers return the empty packages to be professionally cleaned and refilled. By combining biodegradable materials, carbon capture, and reusable services, businesses are proving that modern technology can effectively reduce waste and protect our planet.`;
+
+    // ESTRUTURA DOS DADOS DAS QUESTÕES (NÍVEL B1 / INTERMEDIÁRIO-AVANÇADO)
+    const rawQuestions = [
+      {
+        id: 1,
+        topic: "Compreensão Textual (B1) - Inovações Sustentáveis",
+        pinnedText: textBase123,
+        statement: "Com base no primeiro parágrafo do texto, qual é a principal vantagem ambiental da embalagem desenvolvida pela empresa britânica Notpla em comparação ao plástico convencional, e qual obstáculo ela ainda enfrenta?",
+        correctKey: "C",
+        options: {
+          A: "Ela é feita de algas marrons e dura centenas de anos no oceano, mas é proibida para armazenar líquidos.",
+          B: "Ela se transforma em microplásticos não tóxicos em poucas semanas, porém exige energia solar para se decompor.",
+          C: "Ela se biodegrada naturalmente em quatro a seis semanas sem deixar microplásticos tóxicos, mas ampliar a produção em escala global ainda é um grande desafio.",
+          D: "Ela já substituiu todo o plástico descartável no Reino Unido, embora seja mais cara que o aço inoxidável.",
+          E: "Ela impede que as algas poluam os oceanos, mas só pode ser reciclada em instalações industriais específicas."
+        },
+        justification: "Resposta correta: C. O texto afirma que a embalagem de algas se biodegrada naturalmente em 4 a 6 semanas sem deixar microplásticos tóxicos ('without leaving toxic microplastics behind'), mas ressalta que ampliar a produção mundialmente ('scaling up production') ainda é um grande desafio."
+      },
+      {
+        id: 2,
+        topic: "Compreensão Textual (B1) - Tecnologia e Viabilidade",
+        pinnedText: textBase123,
+        statement: "Analisando o funcionamento da tecnologia Direct Air Capture (DAC) na usina Mammoth, na Islândia, o que o texto permite inferir sobre a relação entre esse serviço e os recursos energéticos?",
+        correctKey: "B",
+        options: {
+          A: "O processo transforma o gás carbônico em água potável, dispensando o uso de qualquer fonte de energia externa.",
+          B: "Embora remova gases de efeito estufa de forma permanente ao transformá-los em pedra, a operação exige alto investimento financeiro e grande quantidade de energia renovável.",
+          C: "Os ventiladores gigantes bombeiam água do subsolo para a atmosfera, o que torna o processo barato e fácil de replicar em qualquer país.",
+          D: "A tecnologia da Climeworks só funciona durante o inverno islandês devido às baixas temperaturas das rochas basálticas.",
+          E: "O gás capturado é vendido para empresas de plástico tradicional para evitar que seja liberado no subsolo."
+        },
+        justification: "Resposta correta: B. O segundo parágrafo explica que o CO₂ vira pedra no subsolo (remoção permanente), mas destaca a ressalva ('Although...'): construir e alimentar essas instalações é caro e requer muita energia renovável ('requires significant renewable energy')."
+      },
+      {
+        id: 3,
+        topic: "Compreensão Textual (B1) - Economia Circular e Síntese",
+        pinnedText: textBase123,
+        statement: "Considerando o modelo de serviços da plataforma Loop e a conclusão apresentada no terceiro parágrafo, qual é a tese central defendida pelo texto?",
+        correctKey: "D",
+        options: {
+          A: "A única forma de salvar o planeta é proibir a venda de alimentos e produtos de higiene em embalagens de vidro.",
+          B: "O modelo de reutilização falha porque os consumidores não aceitam devolver recipientes vazios após o uso.",
+          C: "A captura de carbono é muito mais eficiente do que a substituição de plásticos ou o uso de embalagens retornáveis.",
+          D: "A integração entre materiais biodegradáveis, captura de carbono e serviços de reutilização demonstra que a tecnologia e novos modelos de negócios podem reduzir o lixo de forma eficaz.",
+          E: "Grandes marcas estão abandonando a tecnologia moderna para voltar a usar exclusivamente embalagens de papelão."
+        },
+        justification: "Resposta correta: D. A frase final do texto sintetiza essa ideia: ao combinar materiais biodegradáveis, captura de carbono e serviços reutilizáveis ('By combining biodegradable materials, carbon capture, and reusable services...'), as empresas provam que a tecnologia reduz o desperdício."
+      },
+      {
+        id: 4,
+        topic: "Reported Speech - Advérbio de Tempo (Now -> Then)",
+        pinnedText: null,
+        statement: "Ao converter uma declaração do discurso direto para o discurso indireto (Reported Speech), os advérbios de tempo precisam ser ajustados ao novo contexto temporal.\n\nObserve a fala da pesquisadora: <i>\"We are testing new seaweed packaging <b>now</b>,\" said the scientist.</i>\n\nAssinale a alternativa que apresenta a conversão gramatical e adverbial inteiramente correta:",
+        correctKey: "A",
+        options: {
+          A: "The scientist said that they were testing new seaweed packaging then.",
+          B: "The scientist said that they are testing new seaweed packaging then.",
+          C: "The scientist said that we were testing new seaweed packaging now.",
+          D: "The scientist said that they tested new seaweed packaging right now.",
+          E: "The scientist said that they were testing new seaweed packaging today."
+        },
+        justification: "Resposta correta: A. No Reported Speech, o pronome 'we' muda para 'they', o Present Continuous ('are testing') recua para o Past Continuous ('were testing') e o advérbio 'now' transforma-se em 'then' (ou 'at that moment')."
+      },
+      {
+        id: 5,
+        topic: "Reported Speech - Advérbio de Tempo (Today -> That day)",
+        pinnedText: null,
+        statement: "Analise a declaração do diretor da usina Climeworks durante uma entrevista:\n\n<b>\"Our facility is capturing tons of carbon dioxide today.\"</b>\n\nQual é a forma correta dessa frase no Reported Speech?",
+        correctKey: "D",
+        options: {
+          A: "The director said that our facility was capturing tons of carbon dioxide today.",
+          B: "The director said that their facility is capturing tons of carbon dioxide that day.",
+          C: "The director said that their facility captured tons of carbon dioxide today.",
+          D: "The director said that their facility was capturing tons of carbon dioxide that day.",
+          E: "The director said that their facility would capture tons of carbon dioxide the next day."
+        },
+        justification: "Resposta correta: D. O possessivo 'our' altera-se para 'their', o verbo recua para 'was capturing' e o advérbio 'today' é obrigatoriamente substituído por 'that day'."
+      },
+      {
+        id: 6,
+        topic: "Reported Speech - Advérbio de Tempo (Tomorrow -> The following day)",
+        pinnedText: null,
+        statement: "Leia o anúncio feito pela equipe de logística da plataforma Loop:\n\n<b>\"We will collect the empty steel containers tomorrow.\"</b>\n\nAssinale a opção que realiza corretamente a transposição do verbo modal e do advérbio de tempo para o Reported Speech:",
+        correctKey: "B",
+        options: {
+          A: "The team announced that they will collect the empty steel containers tomorrow.",
+          B: "The team announced that they would collect the empty steel containers the following day.",
+          C: "The team announced that they would collect the empty steel containers yesterday.",
+          D: "The team announced that we would collect the empty steel containers the next day.",
+          E: "The team announced that they collected the empty steel containers that day."
+        },
+        justification: "Resposta correta: B. O auxiliar futuro 'will' recua para 'would', 'we' muda para 'they' e 'tomorrow' transforma-se em 'the following day' (ou 'the next day')."
+      },
+      {
+        id: 7,
+        topic: "Reported Speech - Advérbio de Tempo (Yesterday -> The day before)",
+        pinnedText: null,
+        statement: "Considere a seguinte afirmação sobre um projeto de reciclagem:\n\n<b>\"The company launched a zero-waste service yesterday,\" the manager explained.</b>\n\nAo passar essa frase (que está no Simple Past) para o Reported Speech, a estrutura e o advérbio corretos são:",
+        correctKey: "E",
+        options: {
+          A: "The manager explained that the company launched a zero-waste service yesterday.",
+          B: "The manager explained that the company has launched a zero-waste service the day before.",
+          C: "The manager explained that the company had launched a zero-waste service yesterday.",
+          D: "The manager explained that the company would launch a zero-waste service the previous day.",
+          E: "The manager explained that the company had launched a zero-waste service the day before."
+        },
+        justification: "Resposta correta: E. Quando a frase original está no Simple Past ('launched'), ela recua para o Past Perfect ('had launched') no Reported Speech, e o advérbio 'yesterday' muda para 'the day before' (ou 'the previous day')."
+      },
+      {
+        id: 8,
+        topic: "Reported Speech - Advérbio de Lugar (Here -> There)",
+        pinnedText: null,
+        statement: "Observe a orientação dada por um engenheiro ambiental aos visitantes:\n\n<b>\"You can see how the carbon filters work here.\"</b>\n\nAo converter essa fala para o Reported Speech, como ficam o verbo modal e o advérbio de lugar?",
+        correctKey: "C",
+        options: {
+          A: "The engineer told the visitors that they can see how the carbon filters worked here.",
+          B: "The engineer told the visitors that they could see how the carbon filters work here.",
+          C: "The engineer told the visitors that they could see how the carbon filters worked there.",
+          D: "The engineer told the visitors that you could see how the carbon filters worked there.",
+          E: "The engineer told the visitors that they will see how the carbon filters worked there."
+        },
+        justification: "Resposta correta: C. O pronome 'you' passa a 'they', o modal 'can' recua para 'could', o verbo 'work' vai para o passado ('worked') e o advérbio de lugar 'here' (aqui) muda para 'there' (lá)."
+      },
+      {
+        id: 9,
+        topic: "Reported Speech - Expressões Demonstrativas e de Tempo (This week -> That week)",
+        pinnedText: null,
+        statement: "Analise a declaração de uma executiva sobre metas sustentáveis:\n\n<b>\"We have reduced plastic waste by 40% this week.\"</b>\n\nAssinale a alternativa que converte corretamente o tempo verbal (Present Perfect) e a expressão temporal para o Reported Speech:",
+        correctKey: "A",
+        options: {
+          A: "The executive stated that they had reduced plastic waste by 40% that week.",
+          B: "The executive stated that they have reduced plastic waste by 40% that week.",
+          C: "The executive stated that they had reduced plastic waste by 40% this week.",
+          D: "The executive stated that they reduced plastic waste by 40% the week before.",
+          E: "The executive stated that we had reduced plastic waste by 40% that week."
+        },
+        justification: "Resposta correta: A. O Present Perfect ('have reduced') recua para o Past Perfect ('had reduced'), 'we' muda para 'they' e a expressão 'this week' transforma-se em 'that week'."
+      },
+      {
+        id: 10,
+        topic: "Reported Speech - Advérbio de Tempo (Ago -> Before)",
+        pinnedText: null,
+        statement: "Considere a fala de um especialista em sustentabilidade sobre o início de um projeto:\n\n<b>\"Notpla started developing seaweed packages five years ago,\" the reporter noted.</b>\n\nQual opção apresenta a conversão exata para o Reported Speech, respeitando a mudança do advérbio 'ago'?",
+        correctKey: "B",
+        options: {
+          A: "The reporter noted that Notpla started developing seaweed packages five years ago.",
+          B: "The reporter noted that Notpla had started developing seaweed packages five years before.",
+          C: "The reporter noted that Notpla has started developing seaweed packages five years before.",
+          D: "The reporter noted that Notpla had started developing seaweed packages five years ago.",
+          E: "The reporter noted that Notpla would start developing seaweed packages five years later."
+        },
+        justification: "Resposta correta: B. No Reported Speech, o Simple Past ('started') recua para o Past Perfect ('had started') e o advérbio 'ago' (atrás) é substituído por 'before' (ou 'earlier')."
+      }
+    ];
+
+    // ESTADO DA APLICAÇÃO E EMBARALHAMENTO DO GABARITO (Fisher-Yates)
+    let processedQuestions = [];
+    let userAnswers = {};
+    let checkedQuestions = {};
+    let currentQuestionIndex = 0;
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function initQuizData() {
+      processedQuestions = rawQuestions.map((q) => {
+        const originalKeys = ['A', 'B', 'C', 'D', 'E'];
+        const optionsList = originalKeys.map(key => ({
+          originalKey: key,
+          text: q.options[key]
+        }));
+
+        // Embaralhamento das opções
+        const shuffledOptions = shuffleArray(optionsList);
+
+        const newLetterLabels = ['A', 'B', 'C', 'D', 'E'];
+        let mappedCorrectLetter = '';
+
+        const finalOptions = shuffledOptions.map((opt, index) => {
+          const currentLabel = newLetterLabels[index];
+          if (opt.originalKey === q.correctKey) {
+            mappedCorrectLetter = currentLabel;
+          }
+          return {
+            label: currentLabel,
+            text: opt.text,
+            originalKey: opt.originalKey
+          };
+        });
+
+        return {
+          ...q,
+          displayOptions: finalOptions,
+          correctDisplayLetter: mappedCorrectLetter
+        };
+      });
+    }
+
+    function buildNavGrid() {
+      const navGrid = document.getElementById('nav-grid');
+      navGrid.innerHTML = '';
+      for (let i = 0; i < processedQuestions.length; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.id = `nav-btn-${i}`;
+        btn.innerText = i + 1;
+        btn.onclick = () => jumpToQuestion(i);
+        navGrid.appendChild(btn);
+      }
+      updateNavStatus();
+    }
+
+    function updateNavStatus() {
+      for (let i = 0; i < processedQuestions.length; i++) {
+        const btn = document.getElementById(`nav-btn-${i}`);
+        if (!btn) continue;
+        btn.classList.remove('active', 'correct', 'incorrect');
+
+        if (i === currentQuestionIndex) {
+          btn.classList.add('active');
+        }
+
+        if (checkedQuestions[i]) {
+          const isCorrect = userAnswers[i] === processedQuestions[i].correctDisplayLetter;
+          if (isCorrect) {
+            btn.classList.add('correct');
+          } else {
+            btn.classList.add('incorrect');
+          }
+        }
+      }
+    }
+
+    function renderQuestion(index) {
+      const q = processedQuestions[index];
+
+      document.getElementById('question-title').innerText = `Questão ${index + 1} de 10`;
+
+      // Pinned Text Box para Q1, Q2 e Q3
+      const pinnedBox = document.getElementById('pinned-text-box');
+      const pinnedContent = document.getElementById('pinned-text-content');
+      if (q.pinnedText) {
+        pinnedContent.innerText = q.pinnedText;
+        pinnedBox.style.display = 'block';
+      } else {
+        pinnedBox.style.display = 'none';
+      }
+
+      document.getElementById('statement-text').innerHTML = q.statement.replace(/\n/g, '<br>');
+
+      const optionsContainer = document.getElementById('options-list');
+      optionsContainer.innerHTML = '';
+
+      const isChecked = checkedQuestions[index];
+
+      q.displayOptions.forEach((opt) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'option-item';
+
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = `option-${index}`;
+        radio.value = opt.label;
+        radio.id = `opt-${opt.label}`;
+        radio.disabled = !!isChecked;
+
+        if (userAnswers[index] === opt.label) {
+          radio.checked = true;
+          itemDiv.classList.add('selected');
+        }
+
+        if (isChecked) {
+          if (opt.label === q.correctDisplayLetter) {
+            itemDiv.classList.add('correct-bg');
+          } else if (userAnswers[index] === opt.label) {
+            itemDiv.classList.add('incorrect-bg');
+          }
+        } else {
+          itemDiv.onclick = () => selectOption(index, opt.label);
+        }
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'option-text';
+        labelSpan.innerHTML = `<strong>${opt.label})</strong> ${opt.text}`;
+
+        itemDiv.appendChild(radio);
+        itemDiv.appendChild(labelSpan);
+        optionsContainer.appendChild(itemDiv);
+      });
+
+      const feedbackBox = document.getElementById('feedback-box');
+      const feedbackText = document.getElementById('feedback-text');
+      if (isChecked) {
+        let textJust = q.justification;
+        textJust = textJust.replace(/Resposta correta: [A-E]\./, `Resposta correta: ${q.correctDisplayLetter}.`);
+        feedbackText.innerText = textJust;
+        feedbackBox.classList.add('show');
+      } else {
+        feedbackBox.classList.remove('show');
+      }
+
+      const btnCheck = document.getElementById('btn-check');
+      btnCheck.disabled = !userAnswers[index] || isChecked;
+
+      const btnNext = document.getElementById('btn-next');
+      if (index === processedQuestions.length - 1) {
+        btnNext.innerText = 'Finish';
+        btnNext.classList.add('btn-finish');
+      } else {
+        btnNext.innerText = 'Next';
+        btnNext.classList.remove('btn-finish');
+      }
+
+      const btnPrev = document.getElementById('btn-prev');
+      btnPrev.disabled = index === 0;
+
+      updateNavStatus();
+    }
+
+    function selectOption(qIndex, label) {
+      if (checkedQuestions[qIndex]) return;
+      userAnswers[qIndex] = label;
+
+      const items = document.querySelectorAll('.option-item');
+      items.forEach(item => item.classList.remove('selected'));
+
+      const radio = document.getElementById(`opt-${label}`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.option-item').classList.add('selected');
+      }
+
+      document.getElementById('btn-check').disabled = false;
+    }
+
+    function checkAnswer() {
+      if (!userAnswers[currentQuestionIndex]) return;
+      checkedQuestions[currentQuestionIndex] = true;
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function jumpToQuestion(index) {
+      currentQuestionIndex = index;
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < processedQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion(currentQuestionIndex);
+      }
+    }
+
+    function finishQuiz() {
+      let totalCorrect = 0;
+      let topicErrors = {};
+      let topicTotals = {};
+
+      processedQuestions.forEach((q, idx) => {
+        const topic = q.topic;
+        if (!topicTotals[topic]) {
+          topicTotals[topic] = 0;
+          topicErrors[topic] = 0;
+        }
+        topicTotals[topic]++;
+
+        const userAns = userAnswers[idx];
+        if (userAns === q.correctDisplayLetter) {
+          totalCorrect++;
+        } else {
+          topicErrors[topic]++;
+        }
+      });
+
+      const totalQuestions = processedQuestions.length;
+      const totalIncorrect = totalQuestions - totalCorrect;
+      
+      const score = (totalCorrect * 1.0).toFixed(1);
+
+      const correctPct = Math.round((totalCorrect / totalQuestions) * 100);
+      const incorrectPct = Math.round((totalIncorrect / totalQuestions) * 100);
+
+      document.getElementById('score-display').innerText = `Sua Nota: ${score.replace('.', ',')} / 10,0`;
+      document.getElementById('stat-correct').innerText = `${totalCorrect} (${correctPct}%)`;
+      document.getElementById('stat-incorrect').innerText = `${totalIncorrect} (${incorrectPct}%)`;
+
+      const diagnosticsList = document.getElementById('diagnostics-list');
+      diagnosticsList.innerHTML = '';
+
+      let needsRevision = false;
+
+      for (const topic in topicTotals) {
+        const errors = topicErrors[topic];
+        const total = topicTotals[topic];
+        const errorPct = (errors / total) * 100;
+
+        if (errorPct > 30) {
+          needsRevision = true;
+          const li = document.createElement('li');
+          let recommendationText = "";
+
+          if (topic.includes("Compreensão")) {
+            recommendationText = "<strong>Compreensão Textual (B1):</strong> Praticar a leitura analítica identificando contrastes, ressalvas e ideias centrais em textos sobre inovações sustentáveis.";
+          } else if (topic.includes("Reported Speech")) {
+            recommendationText = `<strong>${topic}:</strong> Revisar as regras de conversão de advérbios de tempo e lugar (ex: now -> then, today -> that day, yesterday -> the day before, ago -> before, here -> there) junto ao recuo verbal.`;
+          } else {
+            recommendationText = `<strong>${topic}:</strong> Recomenda-se revisar este conteúdo específico (Percentual de erro: ${Math.round(errorPct)}%).`;
+          }
+
+          li.innerHTML = recommendationText;
+          diagnosticsList.appendChild(li);
+        }
+      }
+
+      if (!needsRevision) {
+        const li = document.createElement('li');
+        li.innerHTML = "<strong>Parabéns!</strong> Você demonstrou excelente domínio em todos os tópicos avaliados (taxa de erro inferior a 30%). Continue praticando!";
+        diagnosticsList.appendChild(li);
+      }
+
+      document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function restartQuiz() {
+      userAnswers = {};
+      checkedQuestions = {};
+      currentQuestionIndex = 0;
+      document.getElementById('modal-overlay').style.display = 'none';
+      initQuizData();
+      buildNavGrid();
+      renderQuestion(0);
+    }
+
+    window.onload = function() {
+      initQuizData();
+      buildNavGrid();
+      renderQuestion(0);
+    };
+  </script>
+</body>
+</html>
